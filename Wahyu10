@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mesin Enkripsi Modern - 2411021</title>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN untuk styling modern -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        .crypto-page { display: none; }
+        .crypto-page.active { display: block; }
+        body {
+            background: linear-gradient(135deg, #180507 0%, #29080d 50%, #450a14 100%);
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body class="text-slate-100 font-sans antialiased flex flex-col min-h-screen selection:bg-rose-600 selection:text-white">
+
+    <div class="max-w-4xl w-full mx-auto p-4 sm:p-6 flex-grow flex flex-col justify-between">
+
+        <!-- =================================
+             HALAMAN MENU UTAMA
+        ================================== -->
+        <div id="homePage" class="space-y-8 my-auto">
+            
+            <!-- HEADER -->
+            <header class="text-center space-y-3">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-rose-600/10 border border-rose-500/20 text-rose-400 text-3xl shadow-lg shadow-rose-600/10 backdrop-blur-xl">
+                    🛡️
+                </div>
+                <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight bg-gradient-to-r from-white via-rose-200 to-rose-400 bg-clip-text text-transparent">
+                    MESIN ENKRIPSI
+                </h1>
+                <p class="text-rose-300/80 font-medium text-sm sm:text-base">
+                    Wahyu Krisadriyanto • 2411021
+                </p>
+            </header>
+
+            <!-- MENU GRID -->
+            <main class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+                
+                <!-- ROT13 -->
+                <div onclick="openPage('rot13')" class="group relative bg-slate-900/40 hover:bg-rose-950/20 border border-rose-950/40 hover:border-rose-500/50 rounded-2xl p-6 transition-all duration-300 cursor-pointer shadow-xl backdrop-blur-md flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-rose-500/10 flex items-center justify-center text-rose-400 text-xl mb-4 group-hover:scale-110 transition-transform duration-300">
+                            🔄
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">ROT13</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-6">
+                            Metode Caesar Cipher dengan pergeseran tetap 13 karakter alfabet.
+                        </p>
+                    </div>
+                    <button class="w-full py-2.5 px-4 bg-rose-600/20 hover:bg-rose-600 text-rose-300 hover:text-white text-sm font-semibold rounded-xl border border-rose-500/30 transition-all duration-300" onclick="event.stopPropagation(); openPage('rot13')">
+                        Buka ROT13 →
+                    </button>
+                </div>
+
+                <!-- ATBASH -->
+                <div onclick="openPage('atbash')" class="group relative bg-slate-900/40 hover:bg-rose-950/20 border border-rose-950/40 hover:border-rose-500/50 rounded-2xl p-6 transition-all duration-300 cursor-pointer shadow-xl backdrop-blur-md flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center text-red-400 text-xl mb-4 group-hover:scale-110 transition-transform duration-300">
+                            🔏
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">ATBASH</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-6">
+                            Metode substitusi cermin dengan membalik urutan alfabet (A ke Z).
+                        </p>
+                    </div>
+                    <button class="w-full py-2.5 px-4 bg-red-600/20 hover:bg-red-600 text-red-300 hover:text-white text-sm font-semibold rounded-xl border border-red-500/30 transition-all duration-300" onclick="event.stopPropagation(); openPage('atbash')">
+                        Buka Atbash →
+                    </button>
+                </div>
+
+                <!-- CAESAR -->
+                <div onclick="openPage('caesar')" class="group relative bg-slate-900/40 hover:bg-rose-950/20 border border-rose-950/40 hover:border-rose-500/50 rounded-2xl p-6 transition-all duration-300 cursor-pointer shadow-xl backdrop-blur-md flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-400 text-xl mb-4 group-hover:scale-110 transition-transform duration-300">
+                            🔢
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">SANDI CAESAR</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-6">
+                            Metode pergeseran alfabet fleksibel berdasarkan kunci angka pilihan.
+                        </p>
+                    </div>
+                    <button class="w-full py-2.5 px-4 bg-orange-600/20 hover:bg-orange-600 text-orange-300 hover:text-white text-sm font-semibold rounded-xl border border-orange-500/30 transition-all duration-300" onclick="event.stopPropagation(); openPage('caesar')">
+                        Buka Caesar →
+                    </button>
+                </div>
+
+            </main>
+
+            <!-- FOOTER -->
+            <footer class="text-center text-xs text-rose-500/60 font-medium tracking-wider uppercase">
+                IFB5J • KRIPTOGRAFI
+            </footer>
+
+        </div>
+
+
+        <!-- =================================
+             HALAMAN ROT13
+        ================================== -->
+        <div id="rot13Page" class="crypto-page space-y-6">
+            <main class="bg-slate-900/60 border border-rose-950/50 rounded-3xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl space-y-6">
+                
+                <!-- HEADER KECIL -->
+                <div class="flex items-center justify-between border-b border-rose-950/50 pb-4">
+                    <div class="flex items-center space-x-3">
+                        <button onclick="goHome()" class="w-10 h-10 rounded-xl bg-rose-950/40 hover:bg-rose-900/50 flex items-center justify-center text-rose-300 border border-rose-900/50 transition-colors">
+                            ←
+                        </button>
+                        <span class="text-2xl">🔄</span>
+                        <h2 class="text-xl font-bold text-white">ROT13 Cipher</h2>
+                    </div>
+                    <span class="text-xs font-semibold px-3 py-1 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20">ROT13</span>
+                </div>
+
+                <!-- INPUT AREA -->
+                <div class="space-y-2">
+                    <div class="flex justify-between text-xs text-slate-400 font-medium">
+                        <label>Pesan Masukan</label>
+                        <span id="rot13Count">0 karakter</span>
+                    </div>
+                    <textarea id="rot13Input" rows="3" class="w-full bg-slate-950/60 border border-rose-950/50 rounded-2xl p-4 text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-rose-500 transition-colors resize-none" placeholder="Ketik pesan rahasia di sini..."></textarea>
+                </div>
+
+                <!-- TOMBOL PROSES -->
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="processROT13()" class="py-3 px-4 bg-rose-600 hover:bg-rose-500 text-white font-semibold rounded-xl text-sm transition-all shadow-lg shadow-rose-600/25 flex items-center justify-center space-x-2">
+                        <span>🔒</span> <span>Enkripsi</span>
+                    </button>
+                    <button onclick="processROT13()" class="py-3 px-4 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold rounded-xl text-sm transition-all border border-slate-700 flex items-center justify-center space-x-2">
+                        <span>🔓</span> <span>Dekripsi</span>
+                    </button>
+                </div>
+
+                <!-- HASIL AREA -->
+                <div class="space-y-2">
+                    <label class="text-xs text-slate-400 font-medium">Hasil Enkripsi / Dekripsi</label>
+                    <textarea id="rot13Result" rows="3" readonly class="w-full bg-slate-950/40 border border-rose-950/30 rounded-2xl p-4 text-sm text-rose-300 placeholder-slate-600 focus:outline-none resize-none" placeholder="Hasil akan muncul otomatis..."></textarea>
+                </div>
+
+                <!-- AKSI -->
+                <div class="grid grid-cols-2 gap-3 pt-2">
+                    <button onclick="copyResult('rot13Result')" class="py-2.5 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-xl border border-slate-700 transition-all flex items-center justify-center space-x-1.5">
+                        <span>📋</span> <span>Salin Hasil</span>
+                    </button>
+                    <button onclick="clearROT13()" class="py-2.5 px-4 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 text-xs font-semibold rounded-xl border border-rose-500/20 transition-all flex items-center justify-center space-x-1.5">
+                        <span>🗑</span> <span>Bersihkan</span>
+                    </button>
+                </div>
+
+                <!-- INFO BOX -->
+                <div class="bg-slate-950/40 border border-rose-950/40 rounded-2xl p-4 text-xs text-slate-400 leading-relaxed">
+                    <strong class="text-rose-400">Cara Kerja:</strong> Pergeseran statis sejauh 13 posisi huruf (Contoh: <span class="text-slate-200">A → N</span>, <span class="text-slate-200">B → O</span>).
+                </div>
+
+            </main>
+            <footer class="text-center text-xs text-rose-500/60 font-medium tracking-wider uppercase">
+                IFB5J • ROT13
+            </footer>
+        </div>
+
+
+        <!-- =================================
+             HALAMAN ATBASH
+        ================================== -->
+        <div id="atbashPage" class="crypto-page space-y-6">
+            <main class="bg-slate-900/60 border border-rose-950/50 rounded-3xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl space-y-6">
+                
+                <!-- HEADER KECIL -->
+                <div class="flex items-center justify-between border-b border-rose-950/50 pb-4">
+                    <div class="flex items-center space-x-3">
+                        <button onclick="goHome()" class="w-10 h-10 rounded-xl bg-rose-950/40 hover:bg-rose-900/50 flex items-center justify-center text-rose-300 border border-rose-900/50 transition-colors">
+                            ←
+                        </button>
+                        <span class="text-2xl">🔏</span>
+                        <h2 class="text-xl font-bold text-white">Atbash Cipher</h2>
+                    </div>
+                    <span class="text-xs font-semibold px-3 py-1 rounded-full bg-red-500/10 text-red-400 border border-red-500/20">ATBASH</span>
+                </div>
+
+                <!-- INPUT AREA -->
+                <div class="space-y-2">
+                    <div class="flex justify-between text-xs text-slate-400 font-medium">
+                        <label>Pesan Masukan</label>
+                        <span id="atbashCount">0 karakter</span>
+                    </div>
+                    <textarea id="atbashInput" rows="3" class="w-full bg-slate-950/60 border border-rose-950/50 rounded-2xl p-4 text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-red-500 transition-colors resize-none" placeholder="Ketik pesan rahasia di sini..."></textarea>
+                </div>
+
+                <!-- TOMBOL PROSES -->
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="processAtbash()" class="py-3 px-4 bg-red-600 hover:bg-red-500 text-white font-semibold rounded-xl text-sm transition-all shadow-lg shadow-red-600/25 flex items-center justify-center space-x-2">
+                        <span>🔒</span> <span>Enkripsi</span>
+                    </button>
+                    <button onclick="processAtbash()" class="py-3 px-4 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold rounded-xl text-sm transition-all border border-slate-700 flex items-center justify-center space-x-2">
+                        <span>🔓</span> <span>Dekripsi</span>
+                    </button>
+                </div>
+
+                <!-- HASIL AREA -->
+                <div class="space-y-2">
+                    <label class="text-xs text-slate-400 font-medium">Hasil Enkripsi / Dekripsi</label>
+                    <textarea id="atbashResult" rows="3" readonly class="w-full bg-slate-950/40 border border-rose-950/30 rounded-2xl p-4 text-sm text-red-300 placeholder-slate-600 focus:outline-none resize-none" placeholder="Hasil akan muncul otomatis..."></textarea>
+                </div>
+
+                <!-- AKSI -->
+                <div class="grid grid-cols-2 gap-3 pt-2">
+                    <button onclick="copyResult('atbashResult')" class="py-2.5 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-xl border border-slate-700 transition-all flex items-center justify-center space-x-1.5">
+                        <span>📋</span> <span>Salin Hasil</span>
+                    </button>
+                    <button onclick="clearAtbash()" class="py-2.5 px-4 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 text-xs font-semibold rounded-xl border border-rose-500/20 transition-all flex items-center justify-center space-x-1.5">
+                        <span>🗑</span> <span>Bersihkan</span>
+                    </button>
+                </div>
+
+                <!-- INFO BOX -->
+                <div class="bg-slate-950/40 border border-rose-950/40 rounded-2xl p-4 text-xs text-slate-400 leading-relaxed">
+                    <strong class="text-red-400">Cara Kerja:</strong> Membalik urutan alfabet secara simetris (Contoh: <span class="text-slate-200">A → Z</span>, <span class="text-slate-200">B → Y</span>).
+                </div>
+
+            </main>
+            <footer class="text-center text-xs text-rose-500/60 font-medium tracking-wider uppercase">
+                IFB5J • ATBASH
+            </footer>
+        </div>
+
+
+        <!-- =================================
+             HALAMAN CAESAR CIPHER
+        ================================== -->
+        <div id="caesarPage" class="crypto-page space-y-6">
+            <main class="bg-slate-900/60 border border-rose-950/50 rounded-3xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl space-y-6">
+                
+                <!-- HEADER KECIL -->
+                <div class="flex items-center justify-between border-b border-rose-950/50 pb-4">
+                    <div class="flex items-center space-x-3">
+                        <button onclick="goHome()" class="w-10 h-10 rounded-xl bg-rose-950/40 hover:bg-rose-900/50 flex items-center justify-center text-rose-300 border border-rose-900/50 transition-colors">
+                            ←
+                        </button>
+                        <span class="text-2xl">🔢</span>
+                        <h2 class="text-xl font-bold text-white">Sandi Caesar</h2>
+                    </div>
+                    <span class="text-xs font-semibold px-3 py-1 rounded-full bg-orange-500/10 text-orange-400 border border-orange-500/20">CAESAR</span>
+                </div>
+
+                <!-- INPUT AREA -->
+                <div class="space-y-2">
+                    <div class="flex justify-between text-xs text-slate-400 font-medium">
+                        <label>Pesan Masukan</label>
+                        <span id="caesarCount">0 karakter</span>
+                    </div>
+                    <textarea id="caesarInput" rows="3" class="w-full bg-slate-950/60 border border-rose-950/50 rounded-2xl p-4 text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-orange-500 transition-colors resize-none" placeholder="Ketik pesan rahasia di sini..."></textarea>
+                </div>
+
+                <!-- SHIFT / PERGESERAN -->
+                <div class="space-y-2 bg-slate-950/30 border border-rose-950/40 p-4 rounded-2xl">
+                    <label class="text-xs text-slate-400 font-medium block">Nilai Pergeseran (0 - 25)</label>
+                    <input type="number" id="caesarShift" min="0" max="25" value="3" class="w-full bg-slate-950/60 border border-rose-950/50 rounded-xl px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-orange-500">
+                </div>
+
+                <!-- TOMBOL PROSES -->
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="encryptCaesar()" class="py-3 px-4 bg-orange-600 hover:bg-orange-500 text-white font-semibold rounded-xl text-sm transition-all shadow-lg shadow-orange-600/25 flex items-center justify-center space-x-2">
+                        <span>🔒</span> <span>Enkripsi</span>
+                    </button>
+                    <button onclick="decryptCaesar()" class="py-3 px-4 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold rounded-xl text-sm transition-all border border-slate-700 flex items-center justify-center space-x-2">
+                        <span>🔓</span> <span>Dekripsi</span>
+                    </button>
+                </div>
+
+                <!-- HASIL AREA -->
+                <div class="space-y-2">
+                    <label class="text-xs text-slate-400 font-medium">Hasil Enkripsi / Dekripsi</label>
+                    <textarea id="caesarResult" rows="3" readonly class="w-full bg-slate-950/40 border border-rose-950/30 rounded-2xl p-4 text-sm text-orange-300 placeholder-slate-600 focus:outline-none resize-none" placeholder="Hasil akan muncul otomatis..."></textarea>
+                </div>
+
+                <!-- AKSI -->
+                <div class="grid grid-cols-2 gap-3 pt-2">
+                    <button onclick="copyResult('caesarResult')" class="py-2.5 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-xl border border-slate-700 transition-all flex items-center justify-center space-x-1.5">
+                        <span>📋</span> <span>Salin Hasil</span>
+                    </button>
+                    <button onclick="clearCaesar()" class="py-2.5 px-4 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 text-xs font-semibold rounded-xl border border-rose-500/20 transition-all flex items-center justify-center space-x-1.5">
+                        <span>🗑</span> <span>Bersihkan</span>
+                    </button>
+                </div>
+
+                <!-- INFO BOX -->
+                <div class="bg-slate-950/40 border border-rose-950/40 rounded-2xl p-4 text-xs text-slate-400 leading-relaxed">
+                    <strong class="text-orange-400">Cara Kerja:</strong> Menggeser huruf sesuai angka kunci yang Anda tentukan (Contoh shift 3: <span class="text-slate-200">A → D</span>).
+                </div>
+
+            </main>
+            <footer class="text-center text-xs text-rose-500/60 font-medium tracking-wider uppercase">
+                IFB5J • SANDI CAESAR
+            </footer>
+        </div>
+
+    </div>
+
+    <!-- JAVASCRIPT LOGIKA UTAMA -->
+    <script src="script.js"></script>
+    <script>
+        // Logika Navigasi Antar Halaman
+        function openPage(pageName) {
+            document.getElementById('homePage').classList.add('hidden');
+            document.querySelectorAll('.crypto-page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageName + 'Page').classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function goHome() {
+            document.querySelectorAll('.crypto-page').forEach(p => p.classList.remove('active'));
+            document.getElementById('homePage').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
