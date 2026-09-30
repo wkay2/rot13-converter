@@ -40,7 +40,7 @@
       margin-top: 4px;
     }
     
-    /* Mode Selector Tabs */
+    /* Mode Selector Tabs (3 Tombol: ROT13, Atbash, Caesar) */
     .mode-selector {
       display: flex;
       background: #e8ecf4;
@@ -51,7 +51,7 @@
     }
     .mode-tab {
       flex: 1;
-      padding: 8px 4px;
+      padding: 8px 2px;
       text-align: center;
       font-size: 13px;
       font-weight: 600;
@@ -205,7 +205,7 @@
     <button class="mode-tab" id="tabCaesar" onclick="switchMode('caesar')">Caesar</button>
   </div>
 
-  <!-- Kontrol Geseran Sandi Caesar -->
+  <!-- Kontrol Geseran Sandi Caesar (Hanya muncul jika mode Caesar dipilih) -->
   <div class="caesar-controls" id="caesarControls">
     <label for="shiftValue">Jumlah Geseran (Shift):</label>
     <input type="number" id="shiftValue" value="3" min="1" max="25" oninput="processText()">
@@ -271,7 +271,7 @@
   </div>
   <div class="info-card" id="tableCardCaesar" style="display: none;">
     <h4>📚 Sandi Caesar Info</h4>
-    <p>Geseran bersifat fleksibel. Jika shift = 3, maka A menjadi D, B menjadi E, dan seterusnya.</p>
+    <p>Geseran bersifat fleksibel. Contoh: jika shift = 3, maka A menjadi D, B menjadi E, dan seterusnya.</p>
   </div>
 
   <div class="footer">
@@ -294,7 +294,7 @@
   function switchMode(mode) {
     currentMode = mode;
     
-    // Reset tab classes
+    // Reset tab active classes
     document.getElementById('tabRot13').classList.remove('active');
     document.getElementById('tabAtbash').classList.remove('active');
     document.getElementById('tabCaesar').classList.remove('active');
@@ -351,7 +351,7 @@
   // Fungsi Caesar Cipher dengan shift dinamis
   function caesar(str, shift) {
     shift = parseInt(shift) || 0;
-    shift = ((shift % 26) + 26) % 26; // Menjaga shift dalam rentang 0-25
+    shift = ((shift % 26) + 26) % 26;
     return str.replace(/[a-zA-Z]/g, function(c) {
       let code = c.charCodeAt(0);
       let base = (code >= 65 && code <= 90) ? 65 : 97;
