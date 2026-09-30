@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cipher Converter (ROT13 & Atbash)</title>
+  <title>Cipher Converter (ROT13, Atbash & Caesar)</title>
   <style>
     * {
       box-sizing: border-box;
@@ -46,13 +46,14 @@
       background: #e8ecf4;
       border-radius: 12px;
       padding: 4px;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
+      gap: 4px;
     }
     .mode-tab {
       flex: 1;
-      padding: 10px;
+      padding: 8px 4px;
       text-align: center;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
       cursor: pointer;
       border-radius: 9px;
@@ -65,6 +66,32 @@
       background: #ffffff;
       color: #1a1a1a;
       box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    /* Caesar Shift Control */
+    .caesar-controls {
+      display: none;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 10px 14px;
+      margin-bottom: 16px;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .caesar-controls label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #334155;
+    }
+    .caesar-controls input[type="number"] {
+      width: 60px;
+      padding: 6px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 14px;
+      text-align: center;
+      outline: none;
     }
 
     .section-label {
@@ -171,10 +198,17 @@
     <p>Simple Text Encoder & Decoder</p>
   </div>
 
-  <!-- Pilihan Mode Cipher (ROT13 & Atbash) -->
+  <!-- Pilihan Mode Cipher (ROT13, Atbash, Caesar) -->
   <div class="mode-selector">
     <button class="mode-tab active" id="tabRot13" onclick="switchMode('rot13')">ROT13</button>
     <button class="mode-tab" id="tabAtbash" onclick="switchMode('atbash')">Atbash</button>
+    <button class="mode-tab" id="tabCaesar" onclick="switchMode('caesar')">Caesar</button>
+  </div>
+
+  <!-- Kontrol Geseran Sandi Caesar -->
+  <div class="caesar-controls" id="caesarControls">
+    <label for="shiftValue">Jumlah Geseran (Shift):</label>
+    <input type="number" id="shiftValue" value="3" min="1" max="25" oninput="processText()">
   </div>
 
   <div class="section-label">
@@ -205,6 +239,10 @@
     <h4>💡 Cara Kerja Atbash</h4>
     <p>Setiap huruf dibalik posisinya dari ujung alfabet (A ↔ Z, B ↔ Y). Encode dan Decode menggunakan proses yang sama.</p>
   </div>
+  <div class="info-card" id="infoCardCaesar" style="display: none;">
+    <h4>💡 Cara Kerja Sandi Caesar</h4>
+    <p>Setiap huruf digeser maju atau mundur sejauh angka geseran (shift) yang Anda tentukan di atas.</p>
+  </div>
 
   <!-- Tabel Panduan -->
   <div class="info-card" id="tableCardRot13">
@@ -231,6 +269,10 @@
       </table>
     </div>
   </div>
+  <div class="info-card" id="tableCardCaesar" style="display: none;">
+    <h4>📚 Sandi Caesar Info</h4>
+    <p>Geseran bersifat fleksibel. Jika shift = 3, maka A menjadi D, B menjadi E, dan seterusnya.</p>
+  </div>
 
   <div class="footer">
     Developed by<br>
@@ -244,25 +286,41 @@
   const resultText = document.getElementById('resultText');
   const inputCount = document.getElementById('inputCount');
   const resultCount = document.getElementById('resultCount');
+  const caesarControls = document.getElementById('caesarControls');
+  const shiftValueInput = document.getElementById('shiftValue');
 
   let currentMode = 'rot13';
 
   function switchMode(mode) {
     currentMode = mode;
+    
+    // Reset tab classes
+    document.getElementById('tabRot13').classList.remove('active');
+    document.getElementById('tabAtbash').classList.remove('active');
+    document.getElementById('tabCaesar').classList.remove('active');
+
+    // Hide all cards
+    document.getElementById('infoCardRot13').style.display = 'none';
+    document.getElementById('infoCardAtbash').style.display = 'none';
+    document.getElementById('infoCardCaesar').style.display = 'none';
+    document.getElementById('tableCardRot13').style.display = 'none';
+    document.getElementById('tableCardAtbash').style.display = 'none';
+    document.getElementById('tableCardCaesar').style.display = 'none';
+    caesarControls.style.display = 'none';
+
     if (mode === 'rot13') {
       document.getElementById('tabRot13').classList.add('active');
-      document.getElementById('tabAtbash').classList.remove('active');
       document.getElementById('infoCardRot13').style.display = 'block';
-      document.getElementById('infoCardAtbash').style.display = 'none';
       document.getElementById('tableCardRot13').style.display = 'block';
-      document.getElementById('tableCardAtbash').style.display = 'none';
-    } else {
+    } else if (mode === 'atbash') {
       document.getElementById('tabAtbash').classList.add('active');
-      document.getElementById('tabRot13').classList.remove('active');
       document.getElementById('infoCardAtbash').style.display = 'block';
-      document.getElementById('infoCardRot13').style.display = 'none';
       document.getElementById('tableCardAtbash').style.display = 'block';
-      document.getElementById('tableCardRot13').style.display = 'none';
+    } else if (mode === 'caesar') {
+      document.getElementById('tabCaesar').classList.add('active');
+      document.getElementById('infoCardCaesar').style.display = 'block';
+      document.getElementById('tableCardCaesar').style.display = 'block';
+      caesarControls.style.display = 'flex';
     }
     processText();
   }
@@ -290,14 +348,28 @@
     });
   }
 
+  // Fungsi Caesar Cipher dengan shift dinamis
+  function caesar(str, shift) {
+    shift = parseInt(shift) || 0;
+    shift = ((shift % 26) + 26) % 26; // Menjaga shift dalam rentang 0-25
+    return str.replace(/[a-zA-Z]/g, function(c) {
+      let code = c.charCodeAt(0);
+      let base = (code >= 65 && code <= 90) ? 65 : 97;
+      return String.fromCharCode(((code - base + shift) % 26) + base);
+    });
+  }
+
   function processText() {
     const text = inputText.value;
     let converted = '';
 
     if (currentMode === 'rot13') {
       converted = rot13(text);
-    } else {
+    } else if (currentMode === 'atbash') {
       converted = atbash(text);
+    } else if (currentMode === 'caesar') {
+      const shift = shiftValueInput.value;
+      converted = caesar(text, shift);
     }
 
     resultText.innerText = converted;
