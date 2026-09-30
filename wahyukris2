@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cipher Converter (ROT13, Atbash & Caesar)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    body {
+      background-color: #f0f3f9;
+      display: flex;
+      justify-content: center;
+      padding: 20px 10px;
+    }
+    .container {
+      background: #ffffff;
+      width: 100%;
+      max-width: 420px;
+      border-radius: 24px;
+      padding: 24px 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .header h1 {
+      font-size: 24px;
+      color: #1a1a1a;
+      font-weight: 700;
+    }
+    .header p {
+      font-size: 14px;
+      color: #8e8e93;
+      margin-top: 4px;
+    }
+    
+    .mode-selector {
+      display: flex;
+      background: #e8ecf4;
+      border-radius: 12px;
+      padding: 4px;
+      margin-bottom: 16px;
+      gap: 4px;
+    }
+    .mode-tab {
+      flex: 1;
+      padding: 8px 2px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 9px;
+      color: #3a4759;
+      transition: all 0.2s ease;
+      border: none;
+      background: transparent;
+    }
+    .mode-tab.active {
+      background: #ffffff;
+      color: #1a1a1a;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .caesar-controls {
+      display: none;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 10px 14px;
+      margin-bottom: 16px;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .caesar-controls label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #334155;
+    }
+    .caesar-controls input[type="number"] {
+      width: 60px;
+      padding: 6px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 14px;
+      text-align: center;
+      outline: none;
+    }
+
+    .section-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: #3c3c43;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+    .char-count {
+      color: #8e8e93;
+      font-weight: normal;
+    }
+    textarea {
+      width: 100%;
+      height: 100px;
+      border: 1.5px solid #1c1c1e;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 15px;
+      resize: none;
+      outline: none;
+    }
+    .result-box {
+      width: 100%;
+      height: 100px;
+      border: 1px solid #e5e5ea;
+      background-color: #fcfcfd;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 15px;
+      color: #1c1c1e;
+      overflow-y: auto;
+    }
+    .btn {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-dark { background-color: #121826; color: white; }
+    .btn-secondary { background-color: #3a4759; color: white; }
+    .btn-light { background-color: #e8ecf4; color: #3a4759; }
+    .btn-blue { background-color: #e3edff; color: #2b6cb0; }
+    .btn-red { background-color: #ffe5e5; color: #e53e3e; }
+
+    .info-card {
+      background-color: #f5f7fa;
+      border-radius: 12px;
+      padding: 14px;
+      margin-top: 16px;
+      font-size: 12px;
+      color: #555;
+    }
+    .info-card h4 {
+      font-size: 13px;
+      color: #1a1a1a;
+      margin-bottom: 4px;
+    }
+    .table-container {
+      overflow-x: auto;
+      margin-top: 8px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: center;
+      font-size: 11px;
+    }
+    th, td {
+      border: 1px solid #e2e8f0;
+      padding: 6px 4px;
+    }
+    th { background-color: #edf2f7; }
+    
+    .footer {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 11px;
+      color: #a0aec0;
+      border-top: 1px solid #edf2f7;
+      padding-top: 16px;
+    }
+    .footer strong { color: #4a5568; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>Cipher Converter</h1>
+    <p>Simple Text Encoder & Decoder</p>
+  </div>
+
+  <div class="mode-selector">
+    <button class="mode-tab active" id="tabRot13" onclick="switchMode('rot13')">ROT13</button>
+    <button class="mode-tab" id="tabAtbash" onclick="switchMode('atbash')">Atbash</button>
+    <button class="mode-tab" id="tabCaesar" onclick="switchMode('caesar')">Caesar</button>
+  </div>
+
+  <div class="caesar-controls" id="caesarControls">
+    <label for="shiftValue">Geseran (Shift):</label>
+    <input type="number" id="shiftValue" value="3" min="1" max="25" oninput="processText('encode')">
+  </div>
+
+  <div class="section-label">
+    <span>🔤 Input Text</span>
+    <span class="char-count" id="inputCount">0 characters</span>
+  </div>
+  <textarea id="inputText" placeholder="Masukkan teks di sini..." oninput="processText('encode')"></textarea>
+
+  <button class="btn btn-dark" onclick="processText('encode')">Encode Text</button>
+  <button class="btn btn-secondary" onclick="processText('decode')">Decode Text</button>
+
+  <div class="section-label" style="margin-top: 16px;">
+    <span>✏️ Result</span>
+    <span class="char-count" id="resultCount">0 characters</span>
+  </div>
+  <div class="result-box" id="resultText"></div>
+
+  <button class="btn btn-light" onclick="copyResult()">📋 Copy</button>
+  <button class="btn btn-blue" onclick="swapText()">🔄 Swap</button>
+  <button class="btn btn-red" onclick="clearAll()">🗑️ Clear</button>
+
+  <div class="info-card" id="infoCardRot13">
+    <h4>💡 Cara Kerja ROT13</h4>
+    <p>Setiap huruf digeser 13 posisi dalam alfabet.</p>
+  </div>
+  <div class="info-card" id="infoCardAtbash" style="display: none;">
+    <h4>💡 Cara Kerja Atbash</h4>
+    <p>Setiap huruf dibalik posisinya dari ujung alfabet (A ↔ Z).</p>
+  </div>
+  <div class="info-card" id="infoCardCaesar" style="display: none;">
+    <h4>💡 Cara Kerja Sandi Caesar</h4>
+    <p>Setiap huruf digeser maju (Encode) atau mundur (Decode) sejauh angka shift.</p>
+  </div>
+
+  <div class="info-card" id="tableCardRot13">
+    <h4>📚 ROT13 Alphabet Table</h4>
+    <div class="table-container">
+      <table>
+        <tr><th>Asli</th><td>A</td><td>B</td><td>C</td><td>D</td></tr>
+        <tr><th>ROT13</th><td>N</td><td>O</td><td>P</td><td>Q</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="info-card" id="tableCardAtbash" style="display: none;">
+    <h4>📚 Atbash Alphabet Table</h4>
+    <div class="table-container">
+      <table>
+        <tr><th>Asli</th><td>A</td><td>B</td><td>C</td><td>D</td></tr>
+        <tr><th>Atbash</th><td>Z</td><td>Y</td><td>X</td><td>W</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="info-card" id="tableCardCaesar" style="display: none;">
+    <h4>📚 Sandi Caesar Info</h4>
+    <p>Gunakan tombol Encode untuk mengenkripsi dan Decode untuk mendekripsi.</p>
+  </div>
+
+  <div class="footer">
+    Developed by<br>
+    <strong>WAHYU KRISADRIYANTO</strong><br>
+    <span style="margin-top:4px; display:inline-block;">© 2026 ROT13 Converter</span>
+  </div>
+</div>
+
+<script>
+  const inputText = document.getElementById('inputText');
+  const resultText = document.getElementById('resultText');
+  const inputCount = document.getElementById('inputCount');
+  const resultCount = document.getElementById('resultCount');
+  const caesarControls = document.getElementById('caesarControls');
+  const shiftValueInput = document.getElementById('shiftValue');
+
+  let currentMode = 'rot13';
+
+  function switchMode(mode) {
+    currentMode = mode;
+    
+    document.getElementById('tabRot13').classList.remove('active');
+    document.getElementById('tabAtbash').classList.remove('active');
+    document.getElementById('tabCaesar').classList.remove('active');
+
+    document.getElementById('infoCardRot13').style.display = 'none';
+    document.getElementById('infoCardAtbash').style.display = 'none';
+    document.getElementById('infoCardCaesar').style.display = 'none';
+    document.getElementById('tableCardRot13').style.display = 'none';
+    document.getElementById('tableCardAtbash').style.display = 'none';
+    document.getElementById('tableCardCaesar').style.display = 'none';
+    caesarControls.style.display = 'none';
+
+    if (mode === 'rot13') {
+      document.getElementById('tabRot13').classList.add('active');
+      document.getElementById('infoCardRot13').style.display = 'block';
+      document.getElementById('tableCardRot13').style.display = 'block';
+    } else if (mode === 'atbash') {
+      document.getElementById('tabAtbash').classList.add('active');
+      document.getElementById('infoCardAtbash').style.display = 'block';
+      document.getElementById('tableCardAtbash').style.display = 'block';
+    } else if (mode === 'caesar') {
+      document.getElementById('tabCaesar').classList.add('active');
+      document.getElementById('infoCardCaesar').style.display = 'block';
+      document.getElementById('tableCardCaesar').style.display = 'block';
+      caesarControls.style.display = 'flex';
+    }
+    processText('encode');
+  }
+
+  function rot13(str) {
+    return str.replace(/[a-zA-Z]/g, function(c) {
+      return String.fromCharCode((c <= "Z" ? 90 : 122) >= (c = c.charCodeAt(0) + 13) ? c : c - 26);
+    });
+  }
+
+  function atbash(str) {
+    return str.replace(/[a-zA-Z]/g, function(char) {
+      const code = char.charCodeAt(0);
+      if (code >= 65 && code <= 90) return String.fromCharCode(155 - code);
+      if (code >= 97 && code <= 122) return String.fromCharCode(219 - code);
+      return char;
+    });
+  }
+
+  function caesar(str, shift, action = 'encode') {
+    shift = parseInt(shift) || 0;
+    shift = ((shift % 26) + 26) % 26;
+    if (action === 'decode') {
+      shift = (26 - shift) % 26;
+    }
+    return str.replace(/[a-zA-Z]/g, function(c) {
+      let code = c.charCodeAt(0);
+      let base = (code >= 65 && code <= 90) ? 65 : 97;
+      return String.fromCharCode(((code - base + shift) % 26) + base);
+    });
+  }
+
+  function processText(action = 'encode') {
+    const text = inputText.value;
+    let converted = '';
+
+    if (currentMode === 'rot13') {
+      converted = rot13(text);
+    } else if (currentMode === 'atbash') {
+      converted = atbash(text);
+    } else if (currentMode === 'caesar') {
+      converted = caesar(text, shiftValueInput.value, action);
+    }
+
+    resultText.innerText = converted;
+    resultCount.innerText = `${converted.length} characters`;
+    inputCount.innerText = `${text.length} characters`;
+  }
+
+  function copyResult() {
+    if (resultText.innerText) {
+      navigator.clipboard.writeText(resultText.innerText);
+      alert('Teks berhasil disalin!');
+    }
+  }
+
+  function swapText() {
+    inputText.value = resultText.innerText;
+    processText('encode');
+  }
+
+  function clearAll() {
+    inputText.value = '';
+    resultText.innerText = '';
+    inputCount.innerText = '0 characters';
+    resultCount.innerText = '0 characters';
+  }
+</script>
+
+</body>
+</html>
