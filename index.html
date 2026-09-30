@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ROT13 Converter</title>
+  <title>Cipher Converter (ROT13 & Atbash)</title>
   <style>
     * {
       box-sizing: border-box;
@@ -43,6 +43,34 @@
       color: #8e8e93;
       margin-top: 4px;
     }
+    
+    /* Mode Selector Tabs */
+    .mode-selector {
+      display: flex;
+      background: #e8ecf4;
+      border-radius: 12px;
+      padding: 4px;
+      margin-bottom: 20px;
+    }
+    .mode-tab {
+      flex: 1;
+      padding: 10px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 9px;
+      color: #3a4759;
+      transition: all 0.2s ease;
+      border: none;
+      background: transparent;
+    }
+    .mode-tab.active {
+      background: #ffffff;
+      color: #1a1a1a;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
     .section-label {
       display: flex;
       justify-content: space-between;
@@ -144,8 +172,14 @@
 <div class="container">
   <div class="header">
     <div class="icon-header">🔐</div>
-    <h1>ROT13 Converter</h1>
+    <h1>Cipher Converter</h1>
     <p>Simple Text Encoder & Decoder</p>
+  </div>
+
+  <!-- Pilihan Mode Cipher (ROT13 & Atbash) -->
+  <div class="mode-selector">
+    <button class="mode-tab active" id="tabRot13" onclick="switchMode('rot13')">ROT13</button>
+    <button class="mode-tab" id="tabAtbash" onclick="switchMode('atbash')">Atbash</button>
   </div>
 
   <div class="section-label">
@@ -154,8 +188,8 @@
   </div>
   <textarea id="inputText" placeholder="Masukkan teks di sini..."></textarea>
 
-  <button class="btn btn-dark" onclick="processROT13()">🔐 Encode ROT13</button>
-  <button class="btn btn-secondary" onclick="processROT13()">🔓 Decode ROT13</button>
+  <button class="btn btn-dark" id="btnEncode" onclick="processText()">🔐 Encode Text</button>
+  <button class="btn btn-secondary" id="btnDecode" onclick="processText()">🔓 Decode Text</button>
 
   <div class="section-label" style="margin-top: 16px;">
     <span>✏️ Result</span>
@@ -167,12 +201,18 @@
   <button class="btn btn-blue" onclick="swapText()">🔄 Swap</button>
   <button class="btn btn-red" onclick="clearAll()">🗑️ Clear</button>
 
-  <div class="info-card">
+  <!-- Informasi Cara Kerja -->
+  <div class="info-card" id="infoCardRot13">
     <h4>💡 Cara Kerja ROT13</h4>
     <p>Setiap huruf digeser 13 posisi dalam alfabet. Encode dan Decode menggunakan proses yang sama.</p>
   </div>
+  <div class="info-card" id="infoCardAtbash" style="display: none;">
+    <h4>💡 Cara Kerja Atbash</h4>
+    <p>Setiap huruf dibalik posisinya dari ujung alfabet (A ↔ Z, B ↔ Y). Encode dan Decode menggunakan proses yang sama.</p>
+  </div>
 
-  <div class="info-card">
+  <!-- Tabel Panduan -->
+  <div class="info-card" id="tableCardRot13">
     <h4>📚 ROT13 Alphabet Table</h4>
     <p>Gunakan tabel ini untuk mempelajari perubahan setiap huruf.</p>
     <div class="table-container">
@@ -181,6 +221,18 @@
         <tr><th>ROT13</th><td>N</td><td>O</td><td>P</td><td>Q</td></tr>
         <tr><th>Asli</th><td>N</td><td>O</td><td>P</td><td>Q</td></tr>
         <tr><th>ROT13</th><td>A</td><td>B</td><td>C</td><td>D</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="info-card" id="tableCardAtbash" style="display: none;">
+    <h4>📚 Atbash Alphabet Table</h4>
+    <p>Gunakan tabel ini untuk mempelajari perubahan setiap huruf.</p>
+    <div class="table-container">
+      <table>
+        <tr><th>Asli</th><td>A</td><td>B</td><td>C</td><td>D</td></tr>
+        <tr><th>Atbash</th><td>Z</td><td>Y</td><td>X</td><td>W</td></tr>
+        <tr><th>Asli</th><td>W</td><td>X</td><td>Y</td><td>Z</td></tr>
+        <tr><th>Atbash</th><td>D</td><td>C</td><td>B</td><td>A</td></tr>
       </table>
     </div>
   </div>
@@ -198,7 +250,29 @@
   const inputCount = document.getElementById('inputCount');
   const resultCount = document.getElementById('resultCount');
 
-  // Fungsi ROT13 (Encode dan Decode mekanismenya sama)
+  let currentMode = 'rot13';
+
+  function switchMode(mode) {
+    currentMode = mode;
+    if (mode === 'rot13') {
+      document.getElementById('tabRot13').classList.add('active');
+      document.getElementById('tabAtbash').classList.remove('active');
+      document.getElementById('infoCardRot13').style.display = 'block';
+      document.getElementById('infoCardAtbash').style.display = 'none';
+      document.getElementById('tableCardRot13').style.display = 'block';
+      document.getElementById('tableCardAtbash').style.display = 'none';
+    } else {
+      document.getElementById('tabAtbash').classList.add('active');
+      document.getElementById('tabRot13').classList.remove('active');
+      document.getElementById('infoCardAtbash').style.display = 'block';
+      document.getElementById('infoCardRot13').style.display = 'none';
+      document.getElementById('tableCardAtbash').style.display = 'block';
+      document.getElementById('tableCardRot13').style.display = 'none';
+    }
+    processText();
+  }
+
+  // Fungsi ROT13
   function rot13(str) {
     return str.replace(/[a-zA-Z]/g, function(c) {
       return String.fromCharCode(
@@ -207,15 +281,37 @@
     });
   }
 
-  function processROT13() {
+  // Fungsi Atbash
+  function atbash(str) {
+    return str.replace(/[a-zA-Z]/g, function(char) {
+      const code = char.charCodeAt(0);
+      if (code >= 65 && code <= 90) { // Huruf Besar A-Z
+        return String.fromCharCode(155 - code);
+      }
+      if (code >= 97 && code <= 122) { // Huruf Kecil a-z
+        return String.fromCharCode(219 - code);
+      }
+      return char;
+    });
+  }
+
+  function processText() {
     const text = inputText.value;
-    const converted = rot13(text);
+    let converted = '';
+
+    if (currentMode === 'rot13') {
+      converted = rot13(text);
+    } else {
+      converted = atbash(text);
+    }
+
     resultText.innerText = converted;
     resultCount.innerText = `${converted.length} characters`;
   }
 
   inputText.addEventListener('input', () => {
     inputCount.innerText = `${inputText.value.length} characters`;
+    processText();
   });
 
   function copyResult() {
@@ -227,9 +323,8 @@
 
   function swapText() {
     inputText.value = resultText.innerText;
-    resultText.innerText = '';
     inputCount.innerText = `${inputText.value.length} characters`;
-    resultCount.innerText = '0 characters';
+    processText();
   }
 
   function clearAll() {
